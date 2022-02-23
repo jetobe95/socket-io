@@ -9,18 +9,26 @@ import (
 	socketio "github.com/googollee/go-socket.io"
 )
 
+const (
+	ROOM = "ROOM"
+)
+
 func main() {
 	server := socketio.NewServer(nil)
+	fmt.Println(Chats{})
 
 	server.OnConnect("/", func(s socketio.Conn) error {
 		s.SetContext("")
+		s.Join(ROOM)
 		fmt.Println("connected:", s.ID())
 		return nil
 	})
 
 	server.OnEvent("/", "notice", func(s socketio.Conn, msg string) {
 		fmt.Println("notice:", msg)
-		s.Emit("reply", "have "+msg)
+		// s.Emit("reply", "have "+msg)
+		fmt.Println(server.BroadcastToRoom(ROOM, "reply", msg))
+
 	})
 
 	server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
