@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	socketio "github.com/googollee/go-socket.io"
 )
@@ -47,6 +48,10 @@ func main() {
 
 	http.Handle("/socket.io/", server)
 	http.Handle("/", http.FileServer(http.Dir("./asset")))
-	log.Println("Serving at localhost:8000...")
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = "8000"
+	}
+	log.Println("Serving at localhost:", PORT)
+	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }
